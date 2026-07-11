@@ -4,9 +4,9 @@
 
 **Goal:** Build a browser-based, mobile-friendly 3D walkthrough of the approved kitchen/bathroom swap, plus matching presentation renders and a dimensioned plan view.
 
-**Architecture:** A Vite-powered vanilla JavaScript application will use Three.js for procedural apartment geometry, physically based materials, lighting, preset cameras, and orbit/walk navigation. All room dimensions, furniture sizes, materials, and review flags live in one immutable design configuration so the plan overlay, 3D scene, and validation tests cannot drift apart. High-resolution presentation renders will follow the same approved configuration and will be displayed separately from the realtime 3D view.
+**Architecture:** A Sites/Vinext React application will use Three.js inside a client-only walkthrough component for procedural apartment geometry, physically based materials, lighting, preset cameras, and orbit navigation. All room dimensions, furniture sizes, materials, and review flags live in one immutable design configuration so the plan overlay, 3D scene, and validation tests cannot drift apart. High-resolution presentation renders will follow the same approved configuration and will be displayed separately from the realtime 3D view.
 
-**Tech Stack:** Vite, Three.js r185 or current compatible release, Vitest, vanilla HTML/CSS/JavaScript, Playwright/browser visual QA, built-in image generation for presentation renders.
+**Tech Stack:** Sites/Vinext, React 19, TypeScript, Three.js r185 or current compatible release, Vitest, Playwright/browser visual QA, built-in image generation for presentation renders.
 
 ## Global Constraints
 
@@ -24,17 +24,17 @@
 ## File Map
 
 - `package.json`: dependency versions and test/build scripts.
-- `index.html`: semantic application shell and fallback message.
-- `src/design-config.js`: single source of truth for dimensions, labels, materials, cameras, and warnings.
-- `src/plan-math.js`: pure unit conversion, bounds, clearance, and layout validation functions.
-- `src/materials.js`: Three.js material factory for marine plywood, stainless steel, glass, tile, and painted walls.
-- `src/apartment.js`: procedural walls, floors, windows, doors, rooms, cabinetry, sanitary ware, storage, and furniture.
-- `src/navigation.js`: preset camera interpolation, orbit/walk switching, reset, and collision-safe target clamping.
-- `src/ui.js`: room buttons, plan overlay, information panel, fullscreen, and mobile drawer.
-- `src/main.js`: renderer, scene, lifecycle, resize, animation loop, and module composition.
-- `src/styles.css`: responsive visual system and touch-safe controls.
-- `tests/plan-math.test.js`: unit and clearance validation.
-- `tests/navigation.test.js`: camera target and preset validation.
+- `app/layout.tsx`: site metadata and global shell.
+- `app/page.tsx`: server page that loads the client walkthrough.
+- `app/globals.css`: responsive visual system and touch-safe controls.
+- `src/design-config.ts`: single source of truth for dimensions, labels, materials, cameras, and warnings.
+- `src/plan-math.ts`: pure unit conversion, bounds, clearance, and layout validation functions.
+- `src/materials.ts`: Three.js material factory for marine plywood, stainless steel, glass, tile, and painted walls.
+- `src/apartment.ts`: procedural walls, floors, windows, doors, rooms, cabinetry, sanitary ware, storage, and furniture.
+- `src/navigation.ts`: preset camera interpolation, orbit switching, reset, and collision-safe target clamping.
+- `src/Walkthrough.tsx`: renderer lifecycle, scene composition, room presets, plan overlay, information panel, fullscreen, and mobile controls.
+- `tests/plan-math.test.ts`: unit and clearance validation.
+- `tests/navigation.test.ts`: camera target and preset validation.
 - `public/source-floor-plan.jpg`: user-provided plan copied into the project for the plan overlay.
 - `public/renders/*.png`: approved matching presentation renders.
 
@@ -42,11 +42,13 @@
 
 **Files:**
 - Create: `package.json`
-- Create: `index.html`
-- Create: `src/design-config.js`
-- Create: `src/plan-math.js`
-- Create: `tests/plan-math.test.js`
-- Create: `src/styles.css`
+- Modify: `package.json`
+- Modify: `app/layout.tsx`
+- Modify: `app/page.tsx`
+- Modify: `app/globals.css`
+- Create: `src/design-config.ts`
+- Create: `src/plan-math.ts`
+- Create: `tests/plan-math.test.ts`
 
 **Interfaces:**
 - Produces: `DESIGN_CONFIG`, `mm(value)`, `rectangleBounds(item)`, `clearanceBetween(a, b)`, and `validateDesign(config)`.
@@ -74,17 +76,17 @@ describe('approved design contract', () => {
 
 - [ ] **Step 2: Run `npm test -- --run tests/plan-math.test.js` and verify failure because the modules do not exist**
 - [ ] **Step 3: Implement the immutable config and pure validation functions using the exact dimensions in Global Constraints**
-- [ ] **Step 4: Add the semantic app shell and responsive base CSS with 44 px minimum touch targets**
+- [ ] **Step 4: Replace the starter metadata, page shell, and global CSS with a semantic Chinese interface and 44 px minimum touch targets**
 - [ ] **Step 5: Run the focused tests and verify all Task 1 tests pass**
 - [ ] **Step 6: Commit with `feat: define apartment design contract`**
 
 ### Task 2: Procedural Apartment, Materials, and Furniture
 
 **Files:**
-- Create: `src/materials.js`
-- Create: `src/apartment.js`
-- Create: `tests/apartment.test.js`
-- Modify: `src/design-config.js`
+- Create: `src/materials.ts`
+- Create: `src/apartment.ts`
+- Create: `tests/apartment.test.ts`
+- Modify: `src/design-config.ts`
 
 **Interfaces:**
 - Consumes: `DESIGN_CONFIG` and `mm(value)`.
@@ -103,12 +105,11 @@ describe('approved design contract', () => {
 ### Task 3: Camera Navigation and Responsive Interface
 
 **Files:**
-- Create: `src/navigation.js`
-- Create: `src/ui.js`
-- Create: `src/main.js`
-- Create: `tests/navigation.test.js`
-- Modify: `src/styles.css`
-- Modify: `index.html`
+- Create: `src/navigation.ts`
+- Create: `src/Walkthrough.tsx`
+- Create: `tests/navigation.test.ts`
+- Modify: `app/globals.css`
+- Modify: `app/page.tsx`
 
 **Interfaces:**
 - Consumes: apartment camera anchors and `DESIGN_CONFIG.cameras`.
@@ -130,8 +131,8 @@ describe('approved design contract', () => {
 - Create: `public/renders/kitchen-detail.png`
 - Create: `public/renders/living-storage.png`
 - Optional create after visual review: `public/renders/bathroom.png`
-- Modify: `src/ui.js`
-- Modify: `src/styles.css`
+- Modify: `src/Walkthrough.tsx`
+- Modify: `app/globals.css`
 
 **Interfaces:**
 - Consumes: the approved design configuration and source plan.
@@ -148,7 +149,7 @@ describe('approved design contract', () => {
 
 **Files:**
 - Create: `tests/browser/walkthrough.spec.js`
-- Modify as required by observed failures: `src/main.js`, `src/navigation.js`, `src/ui.js`, `src/styles.css`
+- Modify as required by observed failures: `src/Walkthrough.tsx`, `src/navigation.ts`, `app/globals.css`
 - Create: `README.md`
 
 **Interfaces:**
