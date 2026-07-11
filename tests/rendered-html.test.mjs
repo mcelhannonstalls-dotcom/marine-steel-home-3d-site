@@ -23,6 +23,13 @@ test("server-renders the apartment design shell", async () => {
   assert.match(html, /<title>海洋板与不锈钢之家 \| 交互式 3D 设计<\/title>/i);
   assert.match(html, /厨卫互换/);
   assert.match(html, /概念设计展示/);
+  assert.match(html, /data-walkthrough="true"/);
+  assert.match(html, /全屋俯瞰/);
+  assert.match(html, /厨房中岛/);
+  assert.match(html, /客厅储物/);
+  assert.match(html, /新卫生间/);
+  assert.match(html, /查看户型/);
+  assert.match(html, /全屏/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|Codex is working/i);
 });
 

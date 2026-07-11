@@ -59,10 +59,9 @@ export const DESIGN_CONFIG = {
   ],
   cameras: [
     { id: "overview", label: "全屋俯瞰", position: [6.7, 9.2, 7.8], target: [0, 0, -3.1] },
-    { id: "kitchen", label: "厨房中岛", position: [2.0, 1.65, -1.0], target: [1.1, 1.05, -3.2] },
-    { id: "living", label: "客厅储物", position: [1.7, 1.7, 0.9], target: [-1.65, 1.0, -0.2] },
+    { id: "kitchen", label: "厨房中岛", position: [1.5, 1.72, 1.12], target: [0.44, 0.78, -1.18] },
+    { id: "living", label: "客厅储物", position: [1.55, 1.72, -1.08], target: [-0.72, 0.86, 0.58] },
     { id: "bathroom", label: "新卫生间", position: [-1.1, 1.65, -1.4], target: [-1.15, 1.0, -3.65] },
     { id: "bedroom", label: "卧室", position: [1.6, 1.65, 4.1], target: [0, 1.0, 2.3] },
   ] satisfies readonly CameraPreset[],
 } as const;
-
