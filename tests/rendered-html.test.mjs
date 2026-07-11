@@ -31,9 +31,9 @@ test("server-renders the apartment design shell", async () => {
   assert.match(html, /查看户型/);
   assert.match(html, /全屏/);
   assert.match(html, /精选效果图/);
-  assert.match(html, /\/renders\/kitchen-island\.png/);
-  assert.match(html, /\/renders\/kitchen-detail\.png/);
-  assert.match(html, /\/renders\/living-storage\.png/);
+  assert.match(html, /\/renders\/kitchen-island\.jpg/);
+  assert.match(html, /\/renders\/kitchen-detail\.jpg/);
+  assert.match(html, /\/renders\/living-storage\.jpg/);
   assert.match(html, /客厅望向开放式厨房与独立中岛/);
   assert.doesNotMatch(html, /_vinext\/image\?url=/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|Codex is working/i);

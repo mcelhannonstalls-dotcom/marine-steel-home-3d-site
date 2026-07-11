@@ -1,98 +1,49 @@
-# vinext-starter
+# 海洋板与不锈钢之家
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+基于原户型图和实景视频制作的一室一厅概念装修方案，核心改造为厨卫互换、开放式厨房、独立中岛与客厅通顶储物。
 
-## Prerequisites
-
-- Node.js `>=22.13.0`
-
-## Quick Start
+## 查看 3D
 
 ```bash
 npm install
 npm run dev
-npm run build
 ```
 
-This starter does not use `wrangler.jsonc`.
+浏览器打开终端显示的本地地址。默认情况下为 `http://localhost:3000/`。
 
-## Included Shape
+## 操作
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+- 点击“全屋俯瞰、厨房中岛、客厅储物、新卫生间、卧室”切换固定视角。
+- 鼠标拖动或单指拖动旋转视角；滚轮或双指缩放。
+- 点击中岛、橱柜、卫浴或家具查看材料、尺寸和风险说明。
+- “查看户型”展示厨卫互换后的概念空间关系；“全屏”进入沉浸浏览。
+- 页面下方包含三张与方案统一的效果图。
 
-## Workspace Auth Headers
+## 已锁定设计条件
 
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
+- 新厨房位于原卫生间，约 1873 × 2528 mm，朝客厅开放。
+- 新卫生间位于原厨房，约 2289 × 2528 mm。
+- 中岛约 1600 × 780 × 900 mm，为可环绕的独立家具。
+- 厨房柜体使用海洋板，台面与主要挡水区域使用拉丝 304 不锈钢。
+- 客厅采用约 340 mm 深的通顶综合储物墙。
+- 灶具按电磁灶设计，不在中岛设置水槽或灶具。
 
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
+## 施工前必须复核
 
-Treat the full name as optional and fall back to email when it is absent:
+本项目是概念设计与空间体验，不是施工图。施工前必须由专业人员现场确认：
 
-```tsx
-import { headers } from "next/headers";
+- 厨卫隔墙是否为非承重墙，以及物业是否允许拆改。
+- 原卫生间排污立管位置、新马桶 110 mm 支管长度与坡度。
+- 公共烟道位置、新厨房排烟路径和检修条件。
+- 卫生间防水、闭水试验、楼板开孔与同层排水条件。
+- 燃气、热水器、电磁灶专线和强弱电回路。
 
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
+## 验证
 
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+npm test
+npm run test:site
+npx tsc --noEmit
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
-
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
-
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
-
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
-
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
-
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
-
-## Useful Commands
-
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+设计说明位于 `docs/superpowers/specs/2026-07-12-kitchen-bathroom-swap-design.md`，实施计划位于 `docs/superpowers/plans/2026-07-12-interactive-3d-apartment-plan.md`。

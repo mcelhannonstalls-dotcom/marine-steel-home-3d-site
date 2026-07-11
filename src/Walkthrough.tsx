@@ -41,8 +41,8 @@ export function Walkthrough() {
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
     } catch {
-      setWebglError(true);
-      return;
+      const errorTimer = window.setTimeout(() => setWebglError(true), 0);
+      return () => window.clearTimeout(errorTimer);
     }
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -140,10 +140,11 @@ export function Walkthrough() {
       frame = requestAnimationFrame(render);
     };
     render();
-    setReady(true);
+    const readyFrame = requestAnimationFrame(() => setReady(true));
 
     return () => {
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(readyFrame);
       resizeObserver.disconnect();
       renderer.domElement.removeEventListener("pointerup", handlePointer);
       navigation.dispose();
