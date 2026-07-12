@@ -77,7 +77,7 @@ const addCabinetDoors = (
   }
 };
 
-function createArchitecture(materials: ApartmentMaterials) {
+function createArchitecture(materials: ApartmentMaterials, inspectables: THREE.Object3D[]) {
   const group = new THREE.Group();
   group.name = "architecture";
   const minX = -2.141;
@@ -90,8 +90,50 @@ function createArchitecture(materials: ApartmentMaterials) {
   const totalDepth = maxZ - minZ;
 
   box(group, "floor-slab", [maxX - minX, 0.12, totalDepth], [0, -0.06, centerZ], materials.warmGreyFloor);
-  box(group, "west-wall", [thickness, height, totalDepth], [minX + thickness / 2, height / 2, centerZ], materials.warmWhite);
-  box(group, "east-wall", [thickness, height, totalDepth], [maxX - thickness / 2, height / 2, centerZ], materials.warmWhite);
+
+  // The entrance sits in the west wall at the bedroom end of the living room.
+  const entryStartZ = 0.55;
+  const entryEndZ = 1.45;
+  box(group, "west-wall-north", [thickness, height, entryStartZ - minZ], [minX + thickness / 2, height / 2, (minZ + entryStartZ) / 2], materials.warmWhite);
+  box(group, "west-wall-south", [thickness, height, maxZ - entryEndZ], [minX + thickness / 2, height / 2, (entryEndZ + maxZ) / 2], materials.warmWhite);
+  box(group, "west-entry-header", [thickness, 0.42, entryEndZ - entryStartZ], [minX + thickness / 2, 2.49, (entryStartZ + entryEndZ) / 2], materials.warmWhite);
+
+  const entryDoor = new THREE.Group();
+  entryDoor.name = "entry-door";
+  entryDoor.position.set(minX + thickness + 0.02, 0, entryEndZ - 0.02);
+  entryDoor.rotation.y = -0.72;
+  group.add(entryDoor);
+  box(entryDoor, "entry-door-leaf", [0.045, 2.25, 0.86], [0, 1.125, -0.43], materials.marinePlywood);
+  cylinder(entryDoor, "entry-door-handle", 0.025, 0.12, [0.045, 1.05, -0.72], materials.stainless, 16).rotation.z = Math.PI / 2;
+  markInspectable(entryDoor, {
+    label: "入户门",
+    detail: "保留客厅左侧、靠卧室一端的原入户位置，并留出门扇内开和换鞋动线。",
+    size: "门洞约 900 × 2280 mm",
+  }, inspectables);
+
+  // The living room has an exterior side window in the east wall.
+  const livingWindowStartZ = -0.9;
+  const livingWindowEndZ = 0.65;
+  const livingWindowCenterZ = (livingWindowStartZ + livingWindowEndZ) / 2;
+  box(group, "east-wall-north", [thickness, height, livingWindowStartZ - minZ], [maxX - thickness / 2, height / 2, (minZ + livingWindowStartZ) / 2], materials.warmWhite);
+  box(group, "east-wall-south", [thickness, height, maxZ - livingWindowEndZ], [maxX - thickness / 2, height / 2, (livingWindowEndZ + maxZ) / 2], materials.warmWhite);
+  box(group, "living-window-sill-wall", [thickness, 0.78, livingWindowEndZ - livingWindowStartZ], [maxX - thickness / 2, 0.39, livingWindowCenterZ], materials.warmWhite);
+  box(group, "living-window-header", [thickness, 0.57, livingWindowEndZ - livingWindowStartZ], [maxX - thickness / 2, 2.415, livingWindowCenterZ], materials.warmWhite);
+
+  const livingWindow = new THREE.Group();
+  livingWindow.name = "living-window";
+  group.add(livingWindow);
+  box(livingWindow, "living-window-glass", [0.025, 1.35, 1.45], [maxX - thickness - 0.01, 1.455, livingWindowCenterZ], materials.glass);
+  box(livingWindow, "living-window-frame-top", [0.05, 0.045, 1.53], [maxX - thickness - 0.02, 2.15, livingWindowCenterZ], materials.darkSteel);
+  box(livingWindow, "living-window-frame-bottom", [0.05, 0.045, 1.53], [maxX - thickness - 0.02, 0.76, livingWindowCenterZ], materials.darkSteel);
+  box(livingWindow, "living-window-frame-centre", [0.05, 1.35, 0.045], [maxX - thickness - 0.02, 1.455, livingWindowCenterZ], materials.darkSteel);
+  markInspectable(livingWindow, {
+    label: "客厅侧窗",
+    detail: "按实景恢复客厅右侧外窗，保留自然采光与通风。",
+    size: "概念尺寸约 1450 × 1350 mm",
+    warning: "窗洞和窗台高度以现场复尺为准。",
+  }, inspectables);
+
   box(group, "north-wall", [maxX - minX, height, thickness], [0, height / 2, minZ + thickness / 2], materials.warmWhite);
   box(group, "balcony-rail", [maxX - minX, 1.02, thickness], [0, 0.51, maxZ - thickness / 2], materials.wallCut);
   box(group, "balcony-glass", [3.6, 1.05, 0.02], [0, 1.55, maxZ - thickness - 0.01], materials.glass);
@@ -235,11 +277,11 @@ function createLiving(materials: ApartmentMaterials, inspectables: THREE.Object3
   const storage = new THREE.Group();
   storage.name = "living-storage-wall";
   room.add(storage);
-  box(storage, "storage-body", [0.34, 2.55, 2.65], [-1.91, 1.275, 0.1], materials.marinePlywood);
+  box(storage, "storage-body", [0.34, 2.55, 1.72], [-1.91, 1.275, -0.64], materials.marinePlywood);
   for (let index = 0; index < 4; index += 1) {
-    box(storage, `storage-door-${index}`, [0.025, 1.16, 0.58], [-1.725, 0.72 + (index % 2) * 1.2, -0.78 + Math.floor(index / 2) * 1.18], materials.plywoodEdge);
+    box(storage, `storage-door-${index}`, [0.025, 1.16, 0.38], [-1.725, 0.72 + (index % 2) * 1.2, -1.02 + Math.floor(index / 2) * 0.82], materials.plywoodEdge);
   }
-  box(storage, "tv-recess", [0.04, 0.82, 1.18], [-1.71, 1.26, 0.22], materials.darkSteel);
+  box(storage, "tv-recess", [0.04, 0.82, 0.72], [-1.71, 1.26, -0.29], materials.darkSteel);
   markInspectable(storage, {
     label: "客厅储物墙",
     detail: "通顶柜整合电视、清洁工具、杂物、书籍与展示，减少零散家具。",
@@ -320,7 +362,7 @@ export function createApartment(config: Config, materials: ApartmentMaterials): 
   const root = new THREE.Group();
   root.name = "apartment";
   const inspectables: THREE.Object3D[] = [];
-  const architecture = createArchitecture(materials);
+  const architecture = createArchitecture(materials, inspectables);
   root.add(architecture.group);
 
   const rooms = {

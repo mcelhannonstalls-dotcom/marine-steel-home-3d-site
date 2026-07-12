@@ -28,8 +28,18 @@ describe("procedural apartment model", () => {
 
     expect(inspectables.length).toBeGreaterThanOrEqual(10);
     expect(inspectables.map((object) => object.userData.label)).toEqual(
-      expect.arrayContaining(["独立中岛", "海洋板厨房", "客厅储物墙", "壁挂马桶"]),
+      expect.arrayContaining(["独立中岛", "海洋板厨房", "客厅储物墙", "壁挂马桶", "入户门", "客厅侧窗"]),
     );
+  });
+
+  it("preserves the entrance opening and living-room side window", () => {
+    const apartment = createApartment(DESIGN_CONFIG, createMaterials());
+    const architecture = apartment.root.getObjectByName("architecture");
+
+    expect(architecture?.getObjectByName("entry-door")).toBeTruthy();
+    expect(architecture?.getObjectByName("living-window")).toBeTruthy();
+    expect(architecture?.getObjectByName("west-wall")).toBeFalsy();
+    expect(architecture?.getObjectByName("east-wall")).toBeFalsy();
   });
 
   it("exposes all camera anchors and apartment bounds", () => {
