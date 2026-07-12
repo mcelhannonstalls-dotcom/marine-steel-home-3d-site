@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { DESIGN_CONFIG } from "../src/design-config";
+import { withSiteBasePath } from "../src/site-path";
 import { Walkthrough } from "../src/Walkthrough";
 
 export default function Home() {
@@ -28,15 +29,15 @@ export default function Home() {
         </div>
         <div className="gallery-grid">
           <figure className="gallery-main">
-            <Image src="/renders/kitchen-island.jpg" width={1448} height={1086} alt="客厅望向开放式厨房与独立中岛" priority unoptimized />
+            <Image src={withSiteBasePath("/renders/kitchen-island.jpg")} width={1448} height={1086} alt="客厅望向开放式厨房与独立中岛" priority unoptimized />
             <figcaption><span>01</span><strong>厨房与独立中岛</strong><em>海洋板 · 304 拉丝不锈钢</em></figcaption>
           </figure>
           <figure>
-            <Image src="/renders/kitchen-detail.jpg" width={1448} height={1086} alt="海洋板柜体与不锈钢台面的厨房细节" unoptimized />
+            <Image src={withSiteBasePath("/renders/kitchen-detail.jpg")} width={1448} height={1086} alt="海洋板柜体与不锈钢台面的厨房细节" unoptimized />
             <figcaption><span>02</span><strong>厨房材料细节</strong><em>电磁灶 · 北窗洗涤</em></figcaption>
           </figure>
           <figure>
-            <Image src="/renders/living-storage.jpg" width={1448} height={1086} alt="客厅通顶储物墙与中岛连接关系" unoptimized />
+            <Image src={withSiteBasePath("/renders/living-storage.jpg")} width={1448} height={1086} alt="客厅通顶储物墙与中岛连接关系" unoptimized />
             <figcaption><span>03</span><strong>客厅通顶储物</strong><em>340 mm 浅柜 · 轻量会客</em></figcaption>
           </figure>
         </div>
